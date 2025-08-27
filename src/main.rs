@@ -23,10 +23,10 @@ fn init_tracing() {
     use tracing_subscriber::{EnvFilter, filter::LevelFilter, fmt, prelude::*};
 
     let rust_log = std::env::var(EnvFilter::DEFAULT_ENV)
-        .unwrap_or_else(|_| "sqlx=info,tower_http=debug,info".into());
+        .unwrap_or_else(|_| "sqlx=debug,tower_http=debug,info".into());
 
     tracing_subscriber::registry()
-        .with(fmt::layer())
+        .with(fmt::layer().pretty())
         .with(
             EnvFilter::builder()
                 .with_default_directive(LevelFilter::INFO.into())
