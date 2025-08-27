@@ -1,28 +1,41 @@
-use axum::{extract::{Path, State}, Json, http::StatusCode};
+use axum::{
+    Json,
+    extract::{Path, State},
+    http::StatusCode,
+};
 use sqlx::SqlitePool;
 
-use crate::{error::Error, todo::{CreateTodo, Todo, UpdateTodo}};
+use crate::{
+    error::Error,
+    todo::{CreateTodo, Todo, UpdateTodo},
+};
 
 pub async fn ping(State(dbpool): State<SqlitePool>) -> Result<String, Error> {
-    todo!()
+    use sqlx::Connection;
+
+    let mut conn = dbpool.acquire().await?;
+    conn.ping()
+        .await
+        .map(|_| "OK".to_string())
+        .map_err(Into::into)
 }
 
 pub async fn todo_list(State(dbpool): State<SqlitePool>) -> Result<Json<Vec<Todo>>, Error> {
-    todo!()
+    Todo::list(dbpool).await.map(Json::from)
 }
 
 pub async fn todo_read(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<i64>,
 ) -> Result<Json<Todo>, Error> {
-    todo!()
+    Todo::read(dbpool, id).await.map(Json::from)
 }
 
 pub async fn todo_create(
     State(dbpool): State<SqlitePool>,
     Json(new_todo): Json<CreateTodo>,
 ) -> Result<Json<Todo>, Error> {
-    todo!()
+    Todo::create(dbpool, new_todo).await.map(Json::from)
 }
 
 pub async fn todo_update(
@@ -30,12 +43,12 @@ pub async fn todo_update(
     Path(id): Path<i64>,
     Json(update_todo): Json<UpdateTodo>,
 ) -> Result<Json<Todo>, Error> {
-    todo!()
+    Todo::update(dbpool, id, update_todo).await.map(Json::from)
 }
 
 pub async fn todo_delete(
     State(dbpool): State<SqlitePool>,
     Path(id): Path<i64>,
-) -> Result<StatusCode, Error> {
-    todo!()
+) -> Result<(), Error> {
+    Todo::delete(dbpool, id).await
 }
