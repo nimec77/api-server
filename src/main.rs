@@ -1,11 +1,15 @@
 mod error;
 mod todo;
+mod router;
+mod api;
 
 #[tokio::main]
 async fn main() {
     init_tracing();
 
     let db_pool = init_dbpool().await.unwrap();
+
+    let router = router::create_router(db_pool).await;
 }
 
 fn init_tracing() {
