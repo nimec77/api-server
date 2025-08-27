@@ -20,7 +20,7 @@ pub struct CreateTodo {
 
 impl CreateTodo {
     pub fn body(&self) -> &str {
-        &self.body.as_ref()
+        self.body.as_ref()
     }
 }
 
@@ -32,7 +32,7 @@ pub struct UpdateTodo {
 
 impl UpdateTodo {
     pub fn body(&self) -> &str {
-        &self.body.as_ref()
+        self.body.as_ref()
     }
 
     pub fn completed(&self) -> bool {

@@ -1,7 +1,7 @@
-mod error;
-mod todo;
-mod router;
 mod api;
+mod error;
+mod router;
+mod todo;
 
 #[tokio::main]
 async fn main() {
@@ -10,6 +10,13 @@ async fn main() {
     let db_pool = init_dbpool().await.unwrap();
 
     let router = router::create_router(db_pool).await;
+
+    let bind_addr = std::env::var("BIND_ADDR").unwrap_or_else(|_| "127.0.0.1:3000".to_string());
+
+    let listener = tokio::net::TcpListener::bind(bind_addr).await.unwrap();
+    axum::serve(listener, router)
+        .await
+        .expect("unable to start server")
 }
 
 fn init_tracing() {
