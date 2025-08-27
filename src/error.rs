@@ -1,5 +1,7 @@
-use axum::{http::StatusCode, response::{IntoResponse, Response}, Json};
-use serde_json::json;
+use axum::{
+    http::StatusCode,
+    response::{IntoResponse, Response},
+};
 
 #[derive(Debug)]
 pub enum Error {
@@ -18,15 +20,9 @@ impl From<sqlx::Error> for Error {
 
 impl IntoResponse for Error {
     fn into_response(self) -> Response {
-        let (status, error_message) = match self {
-            Error::Sqlx(status, message) => (status, message),
-            Error::NotFound => (StatusCode::NOT_FOUND, "Resource not found".to_string()),
-        };
-
-        let body = Json(json!({
-            "error": error_message
-        }));
-
-        (status, body).into_response()
+        match self {
+            Error::Sqlx(code, body) => (code, body).into_response(),
+            Error::NotFound => StatusCode::NOT_FOUND.into_response(),
+        }
     }
 }
