@@ -1,3 +1,6 @@
+mod error;
+mod todo;
+
 #[tokio::main]
 async fn main() {
     init_tracing();
@@ -34,9 +37,9 @@ async fn init_dbpool() -> Result<sqlx::Pool<sqlx::Sqlite>, sqlx::Error> {
         .expect("can't connect to database");
 
     sqlx::migrate!()
-    .run(&dbpool)
-    .await
-    .expect("database migration failed");
+        .run(&dbpool)
+        .await
+        .expect("database migration failed");
 
     Ok(dbpool)
 }
